@@ -1,0 +1,16 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('checkout the source code') {
+            steps {
+                git branch: 'main', url: 'https://github.com/sam358-crypto/Project1'
+            }
+        }
+        stage ("create package") {
+            steps {
+                powershell 'mvn package'
+            }
+        }
+            }
+        }
