@@ -1,4 +1,54 @@
-hello world
-asdfasdf
-hello world
-hello world
+pipeline {
+    agent any
+
+    stages {
+        stage('Check Versions') {
+            steps {
+                script {
+                    echo "Checking System Environment..."
+                    
+                    // 1. Check Java Version
+                    powershell "java -version"
+                    
+                    // 2. Check Git Version
+                    powershell "git --version"
+                    
+                    // 3. Check Jenkins Status (Assuming it's running as a Windows Service)
+                    // This checks if the service is 'Running'
+                    powershell "Get-Service -Name jenkins"
+                    
+                    // 4. Check Docker Version
+                    powershell "docker --version"
+                }
+            }
+        }
+
+        stage('Check Git Branch') {
+            steps {
+                // 5. Check Git Branch
+                // This shows the current branch of the workspace
+                powershell "git branch --show-current"
+            }
+        }
+
+        stage('Copy Directory') {
+            steps {
+                // 6. Copy Directory
+                // -Recurse copies subfolders; -Force overwrites if files exist
+                echo "Copying resume files..."
+                powershell '''
+                    $source = "D:\\devops-resume-sanam"
+                    $destination = "D:\\Jenkins"
+                    
+                    if (Test-Path $source) {
+                        Copy-Item -Path $source -Destination $destination -Recurse -Force
+                        Write-Host "Copy Complete."
+                    } else {
+                        Write-Error "Source path not found!"
+                        exit 1
+                    }
+                '''
+            }
+        }
+    }
+}
